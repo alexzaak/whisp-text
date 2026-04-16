@@ -60,6 +60,10 @@ class AudioRecorder: ObservableObject {
         return frames
     }
     
+    func getCurrentBuffer() -> [Float] {
+        return audioBuffer
+    }
+    
     private func process(buffer: AVAudioPCMBuffer) {
         guard let targetFormat = targetFormat, let converter = converter else { return }
         

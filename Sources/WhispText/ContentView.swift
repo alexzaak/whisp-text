@@ -4,6 +4,7 @@ struct ContentView: View {
     @ObservedObject var audioRecorder: AudioRecorder
     @ObservedObject var whisperWrapper: WhisperWrapper
     @ObservedObject var hotkeyManager: HotkeyManager
+    @ObservedObject var appSettings: AppSettings
     @Binding var accessibilityGranted: Bool
     
     var body: some View {
@@ -59,18 +60,22 @@ struct ContentView: View {
             
             Divider()
             
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Settings")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Toggle("Enable Live Transcription HUD", isOn: $appSettings.enableLiveHUD)
+                    .font(.caption)
+            }
+            
+            Divider()
+            
             HStack {
                 Button("Quit") {
                     NSApplication.shared.terminate(nil)
                 }
                 .keyboardShortcut("q")
-                
                 Spacer()
-                
-                Button("Settings...") {
-                    // Placeholder for future settings window
-                    print("Settings clicked - Placeholder")
-                }
             }
         }
         .padding()

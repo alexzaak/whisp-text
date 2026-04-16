@@ -33,12 +33,10 @@ class WhisperWrapper: ObservableObject {
             print("Transcribing \(audioFrames.count) frames...")
             let results = try await pipe.transcribe(audioArray: audioFrames)
             
-            // Results is usually an array of transcription results or a single result,
-            // WhisperKit's transcribe method usually returns a single TranscriptionResult or array.
-            // Let's get the text safely.
             if let firstResult = results.first {
-                print("Transcription Output: \(firstResult.text)")
-                return firstResult.text
+                let cleaned = filterHallucinations(firstResult.text)
+                print("Transcription Output: \(cleaned)")
+                return cleaned
             }
             print("No transcription results returned.")
             return nil
@@ -46,5 +44,38 @@ class WhisperWrapper: ObservableObject {
             print("Transcription failed: \(error)")
             return nil
         }
+    }
+    
+    func transcribeLive(audioFrames: [Float]) async -> String? {
+        guard let pipe = pipe else { return nil }
+        // 8000 frames = 0.5s of audio to trigger first word
+        guard audioFrames.count > 8000 else { return nil }
+        
+        do {
+            let results = try await pipe.transcribe(audioArray: audioFrames)
+            if let firstResult = results.first {
+                return filterHallucinations(firstResult.text)
+            }
+            return nil
+        } catch {
+            return nil
+        }
+    }
+    
+    private func filterHallucinations(_ text: String) -> String {
+        var filtered = text
+        let blocklist = [
+            "[BLANK_AUDIO]", "[BLANK AUDIO]", "(BLANK_AUDIO)",
+            "[Silence]", "(Silence)", "*Silence*",
+            "[silence]", "(silence)", "*silence*",
+            "[Pause]", "(Pause)",
+            "[INAUDIBLE]", "(INAUDIBLE)"
+        ]
+        
+        for token in blocklist {
+            filtered = filtered.replacingOccurrences(of: token, with: "")
+        }
+        
+        return filtered.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
