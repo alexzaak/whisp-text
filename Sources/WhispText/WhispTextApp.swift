@@ -63,7 +63,7 @@ struct WhispTextApp: App {
                             while !Task.isCancelled {
                                 try? await Task.sleep(nanoseconds: 500_000_000)
                                 let frames = audioRecorder.getCurrentBuffer()
-                                if let text = await whisperWrapper.transcribeLive(audioFrames: frames) {
+                                if let text = await whisperWrapper.transcribeLive(audioFrames: frames, language: appSettings.language) {
                                     DispatchQueue.main.async {
                                         HUDManager.shared.updateHUD(text: text)
                                     }
@@ -86,7 +86,7 @@ struct WhispTextApp: App {
             if audioRecorder.isRecording {
                 let frames = audioRecorder.stopRecording()
                 Task {
-                    if let text = await whisperWrapper.transcribe(audioFrames: frames), !text.isEmpty {
+                    if let text = await whisperWrapper.transcribe(audioFrames: frames, language: appSettings.language), !text.isEmpty {
                         // Append a trailing space for nicer repeated transcriptions
                         TextInjector.paste(text: text + " ")
                     }

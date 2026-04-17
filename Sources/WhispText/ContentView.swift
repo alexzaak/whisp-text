@@ -84,6 +84,19 @@ struct ContentView: View {
                         }
                     }
                 }
+                
+                HStack {
+                    Text("Language:")
+                        .font(.caption)
+                    Spacer()
+                    Picker("", selection: $appSettings.language) {
+                        Text("German").tag("de")
+                        Text("English").tag("en")
+                        Text("Auto").tag("auto")
+                    }
+                    .labelsHidden()
+                    .frame(width: 100)
+                }
             }
             
             Divider()

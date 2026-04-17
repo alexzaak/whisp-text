@@ -35,7 +35,7 @@ class WhisperWrapper: ObservableObject {
         }
     }
     
-    func transcribe(audioFrames: [Float]) async -> String? {
+    func transcribe(audioFrames: [Float], language: String? = nil) async -> String? {
         guard let pipe = pipe else {
             print("WhisperKit not initialized.")
             return nil
@@ -47,7 +47,12 @@ class WhisperWrapper: ObservableObject {
         
         do {
             print("Transcribing \(audioFrames.count) frames...")
-            let results = try await pipe.transcribe(audioArray: audioFrames)
+            var options = DecodingOptions()
+            if let language = language, language != "auto" {
+                options.language = language
+                options.detectLanguage = false
+            }
+            let results = try await pipe.transcribe(audioArray: audioFrames, decodeOptions: options)
             
             if let firstResult = results.first {
                 let cleaned = filterHallucinations(firstResult.text)
@@ -62,13 +67,18 @@ class WhisperWrapper: ObservableObject {
         }
     }
     
-    func transcribeLive(audioFrames: [Float]) async -> String? {
+    func transcribeLive(audioFrames: [Float], language: String? = nil) async -> String? {
         guard let pipe = pipe else { return nil }
         // 8000 frames = 0.5s of audio to trigger first word
         guard audioFrames.count > 8000 else { return nil }
         
         do {
-            let results = try await pipe.transcribe(audioArray: audioFrames)
+            var options = DecodingOptions()
+            if let language = language, language != "auto" {
+                options.language = language
+                options.detectLanguage = false
+            }
+            let results = try await pipe.transcribe(audioArray: audioFrames, decodeOptions: options)
             if let firstResult = results.first {
                 return filterHallucinations(firstResult.text)
             }
