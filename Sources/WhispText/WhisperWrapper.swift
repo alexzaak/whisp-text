@@ -4,8 +4,12 @@ import WhisperKit
 class WhisperWrapper: ObservableObject {
     private var pipe: WhisperKit?
     @Published var isModelLoaded = false
+    private var currentModelName: String?
     
     func initialize(modelName: String = "tiny") async {
+        guard currentModelName != modelName else { return }
+        currentModelName = modelName
+        
         do {
             DispatchQueue.main.async {
                 self.isModelLoaded = false
