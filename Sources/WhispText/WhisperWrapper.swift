@@ -10,6 +10,15 @@ class WhisperWrapper: ObservableObject {
             print("Initializing WhisperKit with tiny.en model...")
             // Force the 'tiny.en' model to avoid cached corrupted large models and improve speed.
             self.pipe = try await WhisperKit(model: "tiny.en")
+            
+            // CoreML models need to compile their execution graphs on the Neural Engine
+            // the very first time they are used, which can take 1-2 minutes.
+            // We force a silent "dummy transcription" immediately at boot to get it out of the way!
+            print("Warming up Neural Engine...")
+            let dummyAudio = [Float](repeating: 0.0, count: 16000)
+            _ = try? await self.pipe?.transcribe(audioArray: dummyAudio)
+            print("Neural Engine ready!")
+            
             DispatchQueue.main.async {
                 self.isModelLoaded = true
                 print("WhisperKit model initialized successfully!")
