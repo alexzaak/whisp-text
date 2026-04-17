@@ -66,6 +66,24 @@ struct ContentView: View {
                     .foregroundColor(.secondary)
                 Toggle("Enable Live Transcription HUD", isOn: $appSettings.enableLiveHUD)
                     .font(.caption)
+                
+                HStack {
+                    Text("Model Tier:")
+                        .font(.caption)
+                    Spacer()
+                    Picker("", selection: $appSettings.modelSize) {
+                        Text("Tiny").tag("tiny")
+                        Text("Base").tag("base")
+                        Text("Small").tag("small")
+                    }
+                    .labelsHidden()
+                    .frame(width: 100)
+                    .onChange(of: appSettings.modelSize) { newValue in
+                        Task {
+                            await whisperWrapper.initialize(modelName: newValue)
+                        }
+                    }
+                }
             }
             
             Divider()

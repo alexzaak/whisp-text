@@ -94,9 +94,9 @@ struct WhispTextApp: App {
             }
         }
         
-        // Initialize WhisperKit Model
+        // Initialize WhisperKit Model dynamically based on user settings
         Task {
-            await whisperWrapper.initialize()
+            await whisperWrapper.initialize(modelName: appSettings.modelSize)
         }
     }
 }

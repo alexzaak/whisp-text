@@ -5,11 +5,14 @@ class WhisperWrapper: ObservableObject {
     private var pipe: WhisperKit?
     @Published var isModelLoaded = false
     
-    func initialize() async {
+    func initialize(modelName: String = "tiny") async {
         do {
-            print("Initializing WhisperKit with tiny.en model...")
-            // Force the 'tiny.en' model to avoid cached corrupted large models and improve speed.
-            self.pipe = try await WhisperKit(model: "tiny.en")
+            DispatchQueue.main.async {
+                self.isModelLoaded = false
+            }
+            
+            print("Initializing WhisperKit with \(modelName) model...")
+            self.pipe = try await WhisperKit(model: modelName)
             
             // CoreML models need to compile their execution graphs on the Neural Engine
             // the very first time they are used, which can take 1-2 minutes.
