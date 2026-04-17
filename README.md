@@ -6,7 +6,9 @@ Instead of dealing with third-party web apps or copy-pasting text, WhispText all
 
 ## 🚀 Features
 
-- **Blazing Fast Local AI:** Uses Apple's CoreML and `WhisperKit` internally to run the OpenAI `tiny.en` Whisper model on-device 100% locally. Zero cloud APIs, zero subscriptions, complete privacy.
+- **Blazing Fast Local AI:** Uses Apple's CoreML and `WhisperKit` internally to run OpenAI's Whisper models on-device 100% locally. Zero cloud APIs, zero subscriptions, complete privacy.
+- **Dynamic Multilingual Models:** Instantly swap between `Tiny`, `Base`, and `Small` model tiers directly from the Menu Bar. The app natively downloads and configures the requested `.mlpackage` from Hugging Face on the fly.
+- **Native Language Targets:** Skip slow "Auto-Detect" processing by explicitly targeting your spoken language (like German or English) via the UI Settings to maximize transcription speed and structural accuracy.
 - **Push-to-Talk Architecture:** Hold down `Fn + Shift` to record, and release the keys to immediately drop the text.
 - **Native Text Injection:** Automatically simulates `Cmd + V` via the macOS Accessibility APIs to "type" your transcription into whatever application currently holds cursor focus. 
 - **Floating HUD Overlay:** When enabled, an elegant glass macOS HUD pops up above your dock to show you the transcription streaming in real-time as you speak, so you aren't talking into the void. This can be toggled natively in the menu bar.
@@ -16,9 +18,20 @@ Instead of dealing with third-party web apps or copy-pasting text, WhispText all
 
 ---
 
-## 🛠️ Build & Launch
+## 📥 Installation
 
-WhispText uses Swift Package Manager to natively handle its ML dependencies. To build the macOS App Bundle from the raw source code:
+### Method 1: Homebrew (Recommended)
+You can easily install WhispText dynamically compiled directly from source using the official Homebrew Tap algorithm:
+```bash
+brew tap alexzaak/whisp-text
+brew install --build-from-source whisptext
+```
+*Homebrew will automatically download dependencies, compile the MacOS application natively for your Silicon architecture, and provide instructions on linking it to your `/Applications` directory.*
+
+---
+
+### Method 2: Manual Build (For Developers)
+WhispText uses Swift Package Manager to natively handle its ML dependencies. To build the macOS App Bundle from the raw source code yourself:
 
 1. Clone or download the repository to your Mac.
    ```bash
